@@ -1,7 +1,3 @@
-from import_export import import_file
-import add_delete_read_func
-
-
 def menu():
     def menu_interface():
         list_menu = ['1. Показать телефонную книгу', '2. Найти контакт по ФИО', '3. Найти контакт по № телефона',
