@@ -53,5 +53,4 @@ def menu():
                     break
         else:
             print("Введите пожалуйста число (арабское), и нажмите клавишу 'Enter'!")
-
     return id_menu
