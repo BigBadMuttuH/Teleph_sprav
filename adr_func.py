@@ -1,15 +1,17 @@
 import csv
-from termcolor import colored, cprint
+from termcolor import colored
 
 
 # Функция вывода Фио, телефонов, описаний из csv файла
-def show(x: int):
+def show(x: int,file_name):
     """
     :param x: Цифра от 1 до 3
     :return: Ничего не возвращает, а просто выводит на печать ФИО, Телефон или Описание в
     зависимости от x
     +++UP Также может выводить целиком строку-запись при x = 4
     """
+    if file_name == '': file_name = 'phone_book.csv'
+
     if x == 1:
         def name():
             with open('phone_book.csv', 'r') as f:
@@ -39,13 +41,24 @@ def show(x: int):
 
         description()
     elif x == 4:
+        #сделать в show ровное отображение (как Антон присылал)
+        #четные строки белым нечетные серым
         def all_row():
-            with open('phone_book.csv', 'r', newline='') as f:
-                reader = csv.reader(f)
-                list2 = [row[0:].replace(';', ' ').replace('\n', '') for row in f]
-                for count, list in enumerate(list2):
-                    print(count, list)
+            with open(file_name, 'r', encoding="utf-8", newline='') as f:
+                #reader = csv.reader(f)
+                list2 = [row.split(";")[0:5] for row in f]
+                for lst in list2:
+                    lst[-1] = lst[-1].strip()
+                for count, item in enumerate(list2):
+                    if count % 2 != 0:
+                        print(colored(f"||  {count} {item[0][:15]:15} | {item[1]:15} | "
+                                      f"{item[2]:15} | {item[3]:15} | {(item[4]):15} ||", 'white'))
+                    else:
+                        print(f"||  {count} {item[0][:15]:15} | {item[1]:15} | {item[2]:15} | "
+                              f"{item[3]:15} | {item[4]:15} ||")
+        print(colored('+'*96,'blue'))
         all_row()
+        print(colored('+'*96,'blue'))
 
 
 # Добавляет в телефонную книгу человека, а также возвращает список из Ф И Т О
@@ -55,10 +68,14 @@ def add_person():
     затем введенный инпут в формате Фамилия;Имя;Отчество;Телефон;Описание укладывает в csv файл. Если файла нет, то
     он создается
     """
-    name = input('Введите полное ФИО человека через пробел: ').split(' ')
-    number = input('Введите № телефона: ')
+    
+    name = ['','','']
+    name[0] = input(f'Введите фамилию контакта: ').replace(' ','')     
+    name[1] = input(f'Введите имя контакта: ').replace(' ','') 
+    name[2] = input(f'Введите отчество контакта: ').replace(' ','') 
+    number = input('Введите № телефона: ').replace(' ','') 
     description = input('Введите описание: ')
-    with open('phone_book.csv', 'a+', newline='') as file:
+    with open('phone_book.csv', 'a+', encoding="utf-8", newline='') as file:
         writer = csv.writer(file, delimiter=';')
         writer.writerow([name[0], name[1], name[2], number, description])
     return [name[0], name[1], name[2], number, description]
@@ -175,24 +192,26 @@ def read_phone_book():
 
 
 # Добавляет list на входе в csv файл
-def add_persons(x: list):
+def add_persons(x: list,file_name):
     """
     :param x: Денис передает list из листов с людьми
     :return: None. Функция через цикл вносит данные из x в csv с которым в последующем будут работать другие функции
     """
-    with open('phone_book.csv', 'a+', newline='') as file:
+    if file_name == '': file_name = 'phone_book.csv'
+    with open(file_name, 'w', encoding="utf-8", newline='') as file:
         writer = csv.writer(file, delimiter=';')
         for count, people in enumerate(x):
-            writer.writerow(x[count][0].split(';'))
+            writer.writerow(x[count])
 
 
 # Перегоняет из csv в list и готовит lst для последующего экспорта
-def csv_to_list():
+def csv_to_list(file_name):
     """
     :return: lst:list для последующего экспорта. Функция читает csv файл('phone_book.csv') и через split добавляет все
     строки в lst которы и возращается.
     """
-    with open('phone_book.csv', 'r') as f:
+    if file_name == '': file_name = 'phone_book.csv'
+    with open(file_name, 'r', encoding="utf-8") as f:
         line = f.readlines()
         lst = []
         for elem in line:
@@ -201,17 +220,15 @@ def csv_to_list():
 
 
 # Тестовый лист
-lst = [["Иванов;Иван;Иванович;89163678796;Коллега"], ["Петров;Петр;Петрович;89173217896;Сосед"],
-       ["Евгеньев;Евгений;Евгеньевич;89263645789;Сват"], ["Александров;Александр;Александрович;89143214586;Брат"],
-       ["Сергеев;Сергей;Сергеевич;89636541896;Папа"], ["Антонова;Антонина;Антоновна;89356789451;Мама"]]
+# lst = [["Иванов;Иван;Иванович;89163678796;Коллега"], ["Петров;Петр;Петрович;89173217896;Сосед"],
+#        ["Евгеньев;Евгений;Евгеньевич;89263645789;Сват"], ["Александров;Александр;Александрович;89143214586;Брат"],
+#        ["Сергеев;Сергей;Сергеевич;89636541896;Папа"], ["Антонова;Антонина;Антоновна;89356789451;Мама"]]
 
 # add_person()
 # add_persons(lst)
 # edit_phone_book()
 # read_phone_book()
 
-print(csv_to_list())
-x = csv_to_list()
-print(x)
-
-
+# print(csv_to_list())
+# x = csv_to_list()
+# print(x)
